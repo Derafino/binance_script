@@ -25,7 +25,7 @@ interval.
 6. Run the script using the following command:
 
     ```
-    python main.py
+    python script.py
     ```
 
     The script will continuously fetch data from the Binance API at the specified interval and save the data to both a CSV
@@ -57,7 +57,6 @@ Python and its dependencies on your local machine.
     ```
 
     This will stop and remove the container.
-
 # Data Storage
 
 The fetched data is stored in two different formats:
@@ -67,3 +66,20 @@ BTCUSDT_1d.csv).
 
 SQLite Database: The data is saved to a SQLite database file named database.db. The database schema includes a table
 named binance_data to store the data.
+
+# Flask UI
+
+The `app.py` file contains a Flask application that provides a user interface for visualizing the fetched data from the Binance API.
+
+The main features of the Flask user interface include:
+
+- Fetching and displaying candlestick chart data: The Flask route `/` renders the `index.html` template and fetches the newest CSV data file using the `get_newest_csv` function. If there is no existing CSV data, the `perform_script` function from `script.py` is called to fetch new data from the Binance API. The fetched data is then read into a Pandas DataFrame and transformed into a candlestick chart using Plotly's `go.Candlestick` class. The candlestick chart is displayed in the user interface.
+
+- Displaying market cap data: The Flask route `/` also fetches the market caps using the `binance.get_market_caps` function. The symbols and market caps are extracted from the fetched data and used to create a Pie chart using Plotly's `go.Pie` class. The pie chart displays the market caps of various symbols in a visually appealing way.
+
+To run the Flask application, execute the following command in the terminal:
+
+```
+python app.py
+```
+![img.png](img.png)

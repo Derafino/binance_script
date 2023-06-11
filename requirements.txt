@@ -1,1 +1,4 @@
 requests==2.31.0
+plotly==5.15.0
+Flask==2.3.2
+pandas==2.0.2

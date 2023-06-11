@@ -1,34 +1,16 @@
 import csv
-import json
+
 import os
 import time
 import sqlite3
-import requests
+
+from api import BinanceAPI
+from config import api_key, symbol, interval
+
+binance = BinanceAPI(api_key)
 
 
-class BinanceAPI:
-    def __init__(self, api_key):
-        self.api_key = api_key
-
-    def fetch_data(self, symbol, interval):
-        url = f"https://api.binance.com/api/v3/klines"
-        headers = {
-            'X-MBX-APIKEY': self.api_key
-        }
-        params = {
-            'symbol': symbol, 'interval': interval
-        }
-        response = requests.get(url, headers=headers, params=params)
-
-        if response.status_code == 200:
-            data = response.json()
-            return data
-        else:
-            print("Error occurred while fetching data from the Binance API.")
-            return None
-
-
-def save_data_to_csv(data, symbol, interval):
+def save_data_to_csv(data):
     if data:
         filename = f"{symbol}_{interval}.csv"
         file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -60,7 +42,7 @@ def save_data_to_csv(data, symbol, interval):
         print(f"Data for {symbol} ({interval}) saved in {filename} successfully.")
 
 
-def save_data_to_database(data, symbol):
+def save_data_to_database(data):
     if data:
         conn = sqlite3.connect('data/database.db')
         cursor = conn.cursor()
@@ -90,27 +72,13 @@ def save_data_to_database(data, symbol):
         print(f"Data for {symbol} saved in database successfully.")
 
 
-def read_config(config_file):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(script_dir, config_file)
-    with open(config_path) as file:
-        config = json.load(file)
-
-    api_key = config['api_key']
-    symbol = config['symbol']
-    interval = config['interval']
-
-    return api_key, symbol, interval
-
-
-def perform_script(api_key, symbol, interval):
-    binance = BinanceAPI(api_key)
+def perform_script():
     data = binance.fetch_data(symbol, interval)
-    save_data_to_csv(data, symbol, interval)
-    save_data_to_database(data, symbol)
+    save_data_to_csv(data)
+    save_data_to_database(data)
 
 
-def convert_interval(interval):
+def convert_interval():
     numeric_value = int(interval[:-1])
     unit = interval[-1]
 
@@ -124,12 +92,10 @@ def convert_interval(interval):
 
 
 def main():
-    config_file = 'config.json'
-    api_key, symbol, interval = read_config(config_file)
-    interval_seconds = convert_interval(interval)
+    interval_seconds = convert_interval()
     try:
         while True:
-            perform_script(api_key, symbol, interval)
+            perform_script()
             time.sleep(interval_seconds)
     except KeyboardInterrupt:
         print('Stopping...')

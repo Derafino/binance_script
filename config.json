@@ -1,5 +1,6 @@
 {
   "api_key": "",
   "symbol": "BTCUSDT",
-  "interval": "1d"
+  "interval": "1d",
+  "cap_symbols": ["XZCETH", "STPTBNB", "HOTTRY", "FTTBUSD", "XRPBULLUSDT", "TVKBTC", "KNCETH", "REEFBIDR", "XNOBUSD", "NEOUSDT"]
 }
