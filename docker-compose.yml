@@ -1,0 +1,8 @@
+version: '3'
+services:
+  binance_script:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
